@@ -1,3 +1,5 @@
 gunicorn
 flask
 pysqlite3
+dash
+dash_bootstrap_components
