@@ -57,6 +57,10 @@ def clear():
     conn.close()
     return(render_template("clear.html"))
 
+@app.route("/dashboard",methods=["GET","POST"])
+def dashbaord():   
+    return(render_template("dashboard.html"))
+
 @app.route("/end",methods=["GET","POST"])
 def end():  
     return(render_template("end.html"))
