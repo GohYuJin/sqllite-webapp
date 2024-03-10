@@ -57,9 +57,49 @@ def clear():
     conn.close()
     return(render_template("clear.html"))
 
-@app.route("/dashboard",methods=["GET","POST"])
-def dashbaord():   
-    return(render_template("dashboard.html"))
+#@app.route("/dashboard",methods=["GET","POST"])
+#def dashboard():   
+#    return(render_template("dashboard.html"))
+
+def query_count_employees():
+    conn = sqlite3.connect('database1.db')
+    cursor = conn.cursor()
+    table_name = 'employee'
+    query = f"SELECT COUNT(*) FROM {table_name}"
+    cursor.execute(query)
+    employee_count = cursor.fetchone()[0]
+    cursor.close()
+    conn.close()
+    return employee_count
+
+
+@callback(Output('live-update-text', 'children'),
+          Input('interval-component', 'n_intervals'))
+def update_metrics(n):
+    count = query_count_employees()
+    return [
+        dbc.Card(
+            dbc.CardBody([
+                 html.H2("Name Count", className="card-title", style={'textAlign': 'center'}),
+                 html.H1('{0}'.format(count), className="card-text", style={'textAlign': 'center', "fontSize": "100px"}),
+            ]), style={"width": "30rem"}
+        ),        
+        html.Br(),
+        dbc.Button(
+            "Go Back", id="back", className="back", external_link=True, href="/main",
+        ),
+    ]
+
+
+dashboard = Dash(__name__, server=app, url_base_pathname="/dash/", external_stylesheets=[dbc.themes.CYBORG])
+dashboard.layout = html.Div([
+        html.Div(id='live-update-text'),
+        dcc.Interval(
+            id='interval-component',
+            interval=5*1000, # in milliseconds
+            n_intervals=0
+        )
+    ], style={"display":"flex", "justify-content": "center", "align-items": "center", "margin-top": "100px"})
 
 @app.route("/end",methods=["GET","POST"])
 def end():  
