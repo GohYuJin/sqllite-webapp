@@ -47,6 +47,16 @@ def query():
     conn.close()
     return(render_template("query.html",r=r))
 
+@app.route("/clear",methods=["GET","POST"])
+def clear():   
+    conn = sqlite3.connect('database1.db')
+    c = conn.cursor()
+    c.execute('DELETE FROM employee;',);
+    conn.commit()
+    c.close()
+    conn.close()
+    return(render_template("clear.html"))
+
 @app.route("/end",methods=["GET","POST"])
 def end():  
     return(render_template("end.html"))
